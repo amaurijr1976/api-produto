@@ -1,0 +1,35 @@
+version: '3.8'
+
+volumes:
+  mongo-vol:
+    
+
+networks:
+  rede_holocron:
+    driver: bridge
+
+services:
+  api:
+    image: amaurijr1976/api-produto:${TAG}
+    build:
+      dockerfile: ./Dockerfile
+      context: ./src
+    ports:
+      - 8080:8080
+    networks:
+      - rede_holocron
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=mongodb://mongouser:mongopwd@mongodb:27017/admin
+  mongodb:
+    image: mongo:4.4.3
+    ports:
+    - 27017:27017
+    volumes:
+      - mongo-vol:/data/db
+    networks:
+      - rede_holocron
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongouser
+      - MONGO_INITDB_ROOT_PASSWORD=mongopwd
